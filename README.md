@@ -1,1 +1,1 @@
-# allergy-tracker
+# allergy-diary
