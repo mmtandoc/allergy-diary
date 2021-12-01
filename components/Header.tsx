@@ -14,6 +14,11 @@ const Header = () => {
           Home
         </a>
       </Link>
+      <Link href="/calendar">
+        <a className="bold" data-active={isActive("/calendar")}>
+          Calendar
+        </a>
+      </Link>
       <style jsx>{`
         .bold {
           font-weight: bold;
@@ -47,6 +52,8 @@ const Header = () => {
           display: flex;
           padding: 2rem;
           align-items: center;
+          flex-grow: 0;
+          flex-shrink: 0;
         }
       `}</style>
     </nav>

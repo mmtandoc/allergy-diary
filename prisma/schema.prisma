@@ -11,19 +11,100 @@ generator client {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String?
-  email     String?
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @updatedAt @map(name: "updated_at")
-  entries   Entry[]
+  id                 Int          @id @default(autoincrement())
+  name               String
+  email              String       @unique
+  password           String
+  createdAt          DateTime     @default(now()) @map(name: "created_at")
+  updatedAt          DateTime     @updatedAt @map(name: "updated_at")
+  entries            Entry[]
+  mainMunicipality   Municipality @relation(fields: [mainMunicipalityId], references: [id])
+  mainMunicipalityId Int
 
   @@map(name: "users")
 }
 
 model Entry {
-  id     Int      @id @default(autoincrement())
-  user   User     @relation(fields: [userId], references: [id])
-  userId Int
-  date   DateTime @unique
+  user           User          @relation(fields: [userId], references: [id])
+  userId         Int
+  date           DateTime      @default(now()) @db.Date
+  rating         Int           @default(0)
+  notes          String?       
+  municipality   Municipality? @relation(fields: [municipalityId], references: [id])
+  municipalityId Int?
+
+  @@id([userId, date])
+  @@map(name: "entries")
+}
+
+model Forecast {
+  municipality   Municipality  @relation(fields: [municipalityId], references: [id])
+  municipalityId Int
+  date           DateTime      @db.Date
+  dateRetrieved  DateTime      @default(now())
+  pollenLevels   PollenLevel[]
+
+  @@id([municipalityId, date])
+  @@map(name: "forecasts")
+}
+
+model PollenLevel {
+  forecast               Forecast   @relation(fields: [forecastMunicipalityId, forecastDate], references: [municipalityId, date])
+  forecastMunicipalityId Int
+  forecastDate           DateTime   @db.Date
+  type                   PollenType
+  value                  Int
+  categoryValue          Int
+
+  @@id([forecastMunicipalityId, forecastDate, type])
+  @@map(name: "pollen_levels")
+}
+
+enum PollenType {
+  GRASS
+  MOLD
+  RAGWEED
+  TREE
+}
+
+model Municipality {
+  id              Int          @id @default(autoincrement())
+  name            String
+  localName       String?
+  subdivision     Subdivision? @relation(fields: [subdivisionId], references: [id])
+  subdivisionId   Int?
+  country         Country      @relation(fields: [countryCode], references: [code])
+  countryCode     String
+  freeformAddress String
+  latitude        Float
+  longitude       Float
+  forecasts       Forecast[]
+
+  users   User[]
+  entries Entry[]
+  @@map(name: "municipalities")
+}
+
+model Subdivision {
+  id                  Int            @id @default(autoincrement())
+  name                String
+  abbreviation        String?
+  country             Country        @relation(fields: [countryCode], references: [code])
+  countryCode         String
+  parentSubdivision   Subdivision?   @relation("SubdivisionToSubdivision", fields: [parentSubdivisionId], references: [id])
+  parentSubdivisionId Int?
+  subdivisions        Subdivision[]  @relation("SubdivisionToSubdivision")
+  municipalities      Municipality[]
+
+  @@map(name: "subdivisions")
+}
+
+model Country {
+  code           String         @id
+  name           String
+  codeISO3       String
+  subdivisions   Subdivision[]
+  municipalities Municipality[]
+
+  @@map(name: "countries")
 }
