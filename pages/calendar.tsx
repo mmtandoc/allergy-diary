@@ -41,7 +41,9 @@ axios.interceptors.response.use((originalResponse) => {
 const CalendarPage = () => {
   const { user } = useUser()
   const [selectedDay, setSelectedDay] = useState(DateTime.now())
-  const [selectedMunicipality, setSelectedMunicipality] = useState(2)
+  const [selectedMunicipality, setSelectedMunicipality] = useState(
+    user.mainMunicipalityId,
+  )
   //const [forecastData, setForecastData] = useState(props.forecastData)
   //const [forecasts, setForecasts] = useState(props.forecasts)
 
@@ -80,12 +82,16 @@ const CalendarPage = () => {
 
   const renderDayContent = (date: DateTime): JSX.Element | undefined => {
     const dateForecast = getForecastByDate(date)
-    if (!dateForecast) {
-      return
-    }
+    const dateEntry = getEntryByDate(date)
+
+    if (!dateForecast) return
+
     return (
       <div>
-        <MiniPollenConditions key={date.toISO()} forecast={dateForecast} />
+        {dateForecast && (
+          <MiniPollenConditions key={date.toISO()} forecast={dateForecast} />
+        )}
+        <p>Rating: {dateEntry?.rating ?? "N/A"}</p>
         <style jsx>{`
           :global(.diff-month .pollen-conditions) {
             opacity: 30%;
@@ -96,9 +102,6 @@ const CalendarPage = () => {
   }
 
   const onEntrySave = async (newEntry: EntryWithMunicipality) => {
-    console.log(newEntry)
-    console.log("SAVE")
-
     mutate(
       `/api/users/${user.id}/entries`,
       async (entries: EntryWithMunicipality[]) => {
@@ -125,7 +128,6 @@ const CalendarPage = () => {
     <Layout>
       <div className="page">
         <h1 style={{ marginTop: "0px" }}>Home Page</h1>
-        <div></div>
         <div id="content">
           <Calendar
             selectedDay={selectedDay}

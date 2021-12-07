@@ -1,10 +1,10 @@
 import axios from "axios"
 import { NextApiRequest, NextApiResponse } from "next"
-import { SearchFuzzyResponse } from "interfaces/azureMaps/search/SearchFuzzyResponse"
+import { SearchFuzzyResponse } from "types/azureMaps/search/SearchFuzzyResponse"
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const {
     query: { locationQuery },
@@ -17,12 +17,12 @@ export default async function handler(
     return
   }
 
-  const results = await axios(
-    `https://atlas.microsoft.com/search/fuzzy/json?api-version=1.0&subscription-key=Fg6JeHgHsf2jtBliDtBgcyCqc8etrmx2XtVgfXTojZI&idxSet=Geo&query=${locationQuery}`
+  const response = await axios.get<SearchFuzzyResponse>(
+    `https://atlas.microsoft.com/search/fuzzy/json?api-version=1.0&subscription-key=Fg6JeHgHsf2jtBliDtBgcyCqc8etrmx2XtVgfXTojZI&idxSet=Geo&query=${locationQuery}&typeahead=true`,
   )
-  const data: SearchFuzzyResponse = results.data
-  const municipalities = data.results.filter(
-    (i) => (i?.entityType ?? "") === "Municipality"
+
+  const municipalities = response.data.results.filter(
+    (i) => (i?.entityType ?? "") === "Municipality",
   )
-  res.status(200).json({ data: municipalities })
+  res.status(200).json({ results: municipalities })
 }

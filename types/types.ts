@@ -13,3 +13,10 @@ const entryWithMunicipality = Prisma.validator<Prisma.EntryArgs>()({
 export type EntryWithMunicipality = Prisma.EntryGetPayload<
   typeof entryWithMunicipality
 >
+
+const municipalityWithParents = Prisma.validator<Prisma.MunicipalityArgs>()({
+  include: { subdivision: true, country: true },
+})
+export type MunicipalityWithParents = Prisma.MunicipalityGetPayload<
+  typeof municipalityWithParents
+>

@@ -1,10 +1,11 @@
 import axios from "axios"
 import AllergyRater from "components/AllergyRater"
 import { useUser } from "contexts/UserContext"
-import { SearchFuzzyResponse } from "interfaces/azureMaps/search/SearchFuzzyResponse"
+import { SearchFuzzyResponse } from "types/azureMaps/search/SearchFuzzyResponse"
 import { DateTime } from "luxon"
 import React, { ChangeEvent, useState } from "react"
 import { EntryWithMunicipality } from "types/types"
+import MunicipalityAutocomplete from "./MunicipalityAutocomplete"
 
 type Props = {
   date: DateTime
@@ -31,9 +32,11 @@ const EntryForm = (props: Props) => {
     props.entryData ?? defaultEntryData,
   )
 
-  const [locationSearchText, setLocationSearchText] = useState(
-    entryData.municipality?.freeformAddress,
+  const [municipalitySearchQuery, setMunicipalitySearchQuery] = useState(
+    `${entryData.municipality?.name}, ${entryData.municipality?.subdivision?.abbreviation}, ${entryData.municipality?.country.name}`,
   )
+
+  const [municipality, setMunicipality] = useState(entryData.municipality)
 
   const mutateEntrySet = (name: string, value: unknown) => {
     if (!isEditing) return
@@ -60,6 +63,23 @@ const EntryForm = (props: Props) => {
     setIsEditing(!isEditing)
   }
 
+  const onSearchClick = async () => {
+    if (!municipalitySearchQuery) {
+      return
+    }
+
+    const typeahead = false
+
+    const response = await axios.get<SearchFuzzyResponse>(
+      `https://atlas.microsoft.com/search/fuzzy/json?subscription-key=Fg6JeHgHsf2jtBliDtBgcyCqc8etrmx2XtVgfXTojZI&api-version=1.0&query=${municipalitySearchQuery}&typeahead=${typeahead}&limit=10&idxSet=Geo`,
+    )
+
+    const municipalities = response.data.results.filter(
+      (i) => i?.entityType === "Municipality",
+    )
+    console.log(municipalities)
+  }
+
   return (
     <div className="entry-container">
       <div className="form-input-group" style={{ flexDirection: "row" }}>
@@ -74,15 +94,24 @@ const EntryForm = (props: Props) => {
       <input name="date" type="hidden" value={props.date.toFormat("y-MM-dd")} />
       <div className="form-input-group">
         <label>Location</label>
-        <div>
-          <input
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          {/* <input
             name="location"
             type="text"
             width="50"
             value={locationSearchText}
             onChange={(e) => setLocationSearchText(e.target.value)}
             readOnly={!isEditing}
+          /> */}
+          <MunicipalityAutocomplete
+            width="50"
+            municipality={municipality ?? undefined}
+            onChange={(e) => setMunicipalitySearchQuery(e.target.value)}
+            readOnly={!isEditing}
           />
+          <button onClick={onSearchClick} disabled={!isEditing}>
+            Search
+          </button>
         </div>
       </div>
       <div className="form-input-group">
@@ -127,7 +156,8 @@ const EntryForm = (props: Props) => {
         }
 
         input[type="text"]:read-only,
-        textarea:read-only {
+        textarea:read-only,
+        :global(.location-autocomplete input[type="text"]:read-only) {
           border-color: transparent;
           box-shadow: none;
           background-color: white;
