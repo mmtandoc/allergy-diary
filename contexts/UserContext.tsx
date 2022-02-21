@@ -54,13 +54,14 @@ function useUser(): {
 }
 
 const UserProvider = ({ children }: { children: React.ReactNode }) => {
+  //TODO: Replace default user details
   const [user, setUser] = useState<UserInfo>({
     id: 1,
     name: "Michael Tandoc",
     email: "michael.tandoc@outlook.com",
-    mainMunicipalityId: 2,
+    mainMunicipalityId: 1,
     mainMunicipality: {
-      id: 2,
+      id: 1,
       name: "Midland",
       localName: null,
       freeformAddress: "Midland, TX",
@@ -72,9 +73,9 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
         name: "United States",
         codeISO3: "USA",
       },
-      subdivisionId: 2,
+      subdivisionId: 1,
       subdivision: {
-        id: 2,
+        id: 1,
         name: "Texas",
         abbreviation: "TX",
         countryCode: "US",

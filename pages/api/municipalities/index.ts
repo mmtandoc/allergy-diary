@@ -96,16 +96,10 @@ export default async function municipalitiesHandler(
           latitude: city.position.lat,
           longitude: city.position.lon,
           freeformAddress: city.address.freeformAddress,
-          subdivision: {
-            connectOrCreate: {
-              where: {
-                id: subdivision?.id ?? undefined,
-              },
-              create: {
-                ...subdivisionData,
-              },
-            },
-          },
+          subdivision:
+            subdivision?.id == null
+              ? { create: subdivisionData }
+              : { connect: { id: subdivision.id } },
           country: {
             connectOrCreate: {
               where: {

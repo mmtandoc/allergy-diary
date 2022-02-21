@@ -68,7 +68,7 @@ enum PollenType {
 }
 
 model Municipality {
-  id              Int          @id @default(autoincrement())
+  id              Int          @id @unique @default(autoincrement())
   name            String
   localName       String?
   subdivision     Subdivision? @relation(fields: [subdivisionId], references: [id])

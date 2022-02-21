@@ -4,8 +4,8 @@ import { useUser } from "contexts/UserContext"
 import { SearchFuzzyResponse } from "types/azureMaps/search/SearchFuzzyResponse"
 import { DateTime } from "luxon"
 import React, { ChangeEvent, useState } from "react"
-import { EntryWithMunicipality } from "types/types"
-import MunicipalityAutocomplete from "./MunicipalityAutocomplete"
+import { EntryWithMunicipality, MunicipalityWithParents } from "types/types"
+import AutocompleteInput from "./AutocompleteInput"
 
 type Props = {
   date: DateTime
@@ -80,6 +80,28 @@ const EntryForm = (props: Props) => {
     console.log(municipalities)
   }
 
+  const getMunicipalities = (query: string) => {
+    console.log("getMunicipalities")
+    return JSON.parse(
+      '[{"id":1,"name":"Midland","localName":null,"subdivisionId":1,"countryCode":"US","freeformAddress":"Midland, TX","latitude":31.99743,"longitude":-102.07804,"subdivision":{"id":1,"name":"Texas","abbreviation":"TX","countryCode":"US","parentSubdivisionId":null},"country":{"code":"US","name":"United States","codeISO3":"USA"}},{"id":2,"name":"Milton","localName":null,"subdivisionId":2,"countryCode":"CA","freeformAddress":"Milton ON","latitude":43.51349,"longitude":-79.8828,"subdivision":{"id":2,"name":"Ontario","abbreviation":"ON","countryCode":"CA","parentSubdivisionId":null},"country":{"code":"CA","name":"Canada","codeISO3":"CAN"}},{"id":3,"name":"Austin","localName":null,"subdivisionId":1,"countryCode":"US","freeformAddress":"Austin, TX","latitude":30.26498,"longitude":-97.7466,"subdivision":{"id":1,"name":"Texas","abbreviation":"TX","countryCode":"US","parentSubdivisionId":null},"country":{"code":"US","name":"United States","codeISO3":"USA"}}]',
+    )
+  }
+
+  const getMunicipalityValue = (item: MunicipalityWithParents) =>
+    [item.name, item.subdivision?.abbreviation, item.country.name].join(", ")
+
+  const renderMunicipalitySuggestion = (item: MunicipalityWithParents) => (
+    <div>
+      {[item.name, item.subdivision?.abbreviation, item.country.name].join(
+        ", ",
+      )}
+    </div>
+  )
+
+  const handleMunicipalityChange = (item: MunicipalityWithParents) => {
+    setMunicipality(item)
+  }
+
   return (
     <div className="entry-container">
       <div className="form-input-group" style={{ flexDirection: "row" }}>
@@ -103,10 +125,14 @@ const EntryForm = (props: Props) => {
             onChange={(e) => setLocationSearchText(e.target.value)}
             readOnly={!isEditing}
           /> */}
-          <MunicipalityAutocomplete
+          <AutocompleteInput
+            name="municipality"
             width="50"
-            municipality={municipality ?? undefined}
-            onChange={(e) => setMunicipalitySearchQuery(e.target.value)}
+            defaultItem={municipality ?? undefined}
+            getSuggestions={getMunicipalities}
+            getItemValue={getMunicipalityValue}
+            renderSuggestion={renderMunicipalitySuggestion}
+            onChange={handleMunicipalityChange}
             readOnly={!isEditing}
           />
           <button onClick={onSearchClick} disabled={!isEditing}>
