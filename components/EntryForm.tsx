@@ -129,7 +129,7 @@ const EntryForm = (props: Props) => {
             name="municipality"
             width="50"
             defaultItem={municipality ?? undefined}
-            getSuggestions={getMunicipalities}
+            items={getMunicipalities(municipalitySearchQuery)}
             getItemValue={getMunicipalityValue}
             renderSuggestion={renderMunicipalitySuggestion}
             onChange={handleMunicipalityChange}

@@ -5,7 +5,7 @@ type Props<T> = {
   defaultItem?: T
   getItemValue: (item: T) => string
   renderSuggestion: (item: T) => JSX.Element
-  getSuggestions: (query: string) => T[]
+  items: T[]
   onChange: (val: T) => void
   width?: string | number
   readOnly: boolean
@@ -115,8 +115,7 @@ const AutocompleteInput = <T,>(props: Props<T>) => {
     props.onChange(item)
   }
 
-  const suggestions: T[] =
-    suggestionsVisible && inputQuery ? props.getSuggestions(inputQuery) : []
+  const suggestions: T[] = props.items
 
   const suggestionItems = suggestions.map((e, i) => (
     <SuggestionItem
@@ -195,7 +194,7 @@ const AutocompleteInput = <T,>(props: Props<T>) => {
           onBlur={() => setSuggestionsVisible(false)}
         />
       </div>
-      {suggestions.length !== 0 && (
+      {suggestions.length !== 0 && suggestionsVisible && (
         <SuggestionsList
           suggestions={suggestionItems}
           selectedIndex={selectedIndex}
