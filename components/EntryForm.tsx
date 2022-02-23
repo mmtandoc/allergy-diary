@@ -80,7 +80,7 @@ const EntryForm = (props: Props) => {
     console.log(municipalities)
   }
 
-  const getMunicipalities = (query: string) => {
+  const getMunicipalities = (query: string): MunicipalityWithParents[] => {
     console.log("getMunicipalities")
     return JSON.parse(
       '[{"id":1,"name":"Midland","localName":null,"subdivisionId":1,"countryCode":"US","freeformAddress":"Midland, TX","latitude":31.99743,"longitude":-102.07804,"subdivision":{"id":1,"name":"Texas","abbreviation":"TX","countryCode":"US","parentSubdivisionId":null},"country":{"code":"US","name":"United States","codeISO3":"USA"}},{"id":2,"name":"Milton","localName":null,"subdivisionId":2,"countryCode":"CA","freeformAddress":"Milton ON","latitude":43.51349,"longitude":-79.8828,"subdivision":{"id":2,"name":"Ontario","abbreviation":"ON","countryCode":"CA","parentSubdivisionId":null},"country":{"code":"CA","name":"Canada","codeISO3":"CAN"}},{"id":3,"name":"Austin","localName":null,"subdivisionId":1,"countryCode":"US","freeformAddress":"Austin, TX","latitude":30.26498,"longitude":-97.7466,"subdivision":{"id":1,"name":"Texas","abbreviation":"TX","countryCode":"US","parentSubdivisionId":null},"country":{"code":"US","name":"United States","codeISO3":"USA"}}]',
@@ -117,14 +117,6 @@ const EntryForm = (props: Props) => {
       <div className="form-input-group">
         <label>Location</label>
         <div style={{ display: "flex", flexDirection: "row" }}>
-          {/* <input
-            name="location"
-            type="text"
-            width="50"
-            value={locationSearchText}
-            onChange={(e) => setLocationSearchText(e.target.value)}
-            readOnly={!isEditing}
-          /> */}
           <AutocompleteInput
             name="municipality"
             width="50"

@@ -11,91 +11,6 @@ type Props<T> = {
   readOnly: boolean
 }
 
-// const getSuggestions = <T,>(
-//   items: T[],
-//   getItemValue: (item: T) => string,
-//   onClick?: (item: T) => void,
-//   selectedIndex?: number,
-// ) => {
-//   /*return items.map((e, i) => (
-//     <li key={i} className={i === selectedIndex ? "selected" : undefined}>
-//       {getItemValue(e)}
-//     </li>
-//   ))*/
-//   return items.map((e, i) => (
-//     <SuggestionItem
-//       key={i}
-//       index={i}
-//       item={e}
-//       getItemValue={getItemValue}
-//       onClick={onClick}
-//       isSelected={i === selectedIndex}
-//     />
-//   ))
-// }
-
-const SuggestionItem = <T,>(props: {
-  index: number
-  item: T
-  getItemValue: (item: T) => string
-  renderSuggestion: (item: T) => JSX.Element
-  onClick?: (item: T) => void
-  isSelected?: boolean
-}) => {
-  const handleClick = () => {
-    props.onClick?.(props.item)
-  }
-  return (
-    <li
-      className={props.isSelected ? "selected" : undefined}
-      onClick={handleClick}
-    >
-      {props.renderSuggestion(props.item)}
-      {}
-    </li>
-  )
-}
-
-SuggestionItem.defaultProps = {
-  onClick: () => undefined,
-}
-
-const SuggestionsList = (props: {
-  selectedIndex?: number
-  suggestions?: JSX.Element[]
-}) => {
-  return (
-    <ul className="suggestions-list">
-      {props.suggestions}
-      <style jsx>{`
-        .suggestions-list {
-          position: absolute;
-          background-color: white;
-          width: 100%;
-          z-index: 1;
-          margin: -1px 0 0 0;
-          list-style-type: none;
-          padding-left: 0;
-          border: black solid 1px;
-        }
-
-        .suggestions-list > :global(li) {
-          padding-left: 1rem;
-          cursor: default;
-        }
-
-        .suggestions-list > :global(li.selected) {
-          background-color: lightblue;
-        }
-
-        .suggestions-list > :global(li:hover) {
-          background-color: lightgray;
-        }
-      `}</style>
-    </ul>
-  )
-}
-
 const AutocompleteInput = <T,>(props: Props<T>) => {
   const [inputQuery, setInputQuery] = useState(
     props.defaultItem == null
@@ -211,6 +126,67 @@ const AutocompleteInput = <T,>(props: Props<T>) => {
         }
       `}</style>
     </div>
+  )
+}
+
+const SuggestionItem = <T,>(props: {
+  index: number
+  item: T
+  getItemValue: (item: T) => string
+  renderSuggestion: (item: T) => JSX.Element
+  onClick?: (item: T) => void
+  isSelected?: boolean
+}) => {
+  const handleClick = () => {
+    props.onClick?.(props.item)
+  }
+  return (
+    <li
+      className={props.isSelected ? "selected" : undefined}
+      onClick={handleClick}
+    >
+      {props.renderSuggestion(props.item)}
+    </li>
+  )
+}
+
+SuggestionItem.defaultProps = {
+  onClick: () => undefined,
+}
+
+const SuggestionsList = (props: {
+  selectedIndex?: number
+  suggestions?: JSX.Element[]
+}) => {
+  return (
+    <ul className="suggestions-list">
+      {props.suggestions}
+      <style jsx>{`
+        .suggestions-list {
+          position: absolute;
+          background-color: white;
+          width: 100%;
+          z-index: 1;
+          margin: -1px 0 0 0;
+          list-style-type: none;
+          padding-left: 0;
+          border: black solid 1px;
+        }
+
+        .suggestions-list > :global(li) {
+          padding-left: 1rem;
+          cursor: default;
+        }
+
+        .suggestions-list > :global(li.selected) {
+          background-color: lightblue;
+        }
+
+        .suggestions-list > :global(li:hover) {
+          background-color: lightgray;
+        }
+      `}</style>
+    </ul>
   )
 }
 
