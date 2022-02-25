@@ -1,13 +1,21 @@
 {
-  "plugins": ["@typescript-eslint"],
+  "plugins": [
+    "@typescript-eslint",
+    "jest"
+  ],
   "extends": [
     "next",
     "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended",
-    "prettier"
+    "prettier",
+    "plugin:jest/recommended",
+    "plugin:jest/style"
   ],
   "rules": {
     "@typescript-eslint/explicit-module-boundary-types": "off",
-    "no-unexpected-multiline":"error"
+    "no-unexpected-multiline": "error"
+  },
+  "env": {
+    "jest/globals": true
   }
 }
