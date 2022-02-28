@@ -7,6 +7,7 @@ type Props<T> = {
   renderSuggestion: (item: T) => JSX.Element
   items: T[]
   onChange: (val: T) => void
+  onQueryChange: (query: string) => void
   width?: string | number
   readOnly: boolean
 }
@@ -44,10 +45,6 @@ const AutocompleteInput = <T,>(props: Props<T>) => {
     />
   ))
 
-  if (selectedIndex !== undefined) {
-    //setInputQuery(props.getItemValue(props.items[selectedIndex]))
-  }
-
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     console.log(selectedIndex)
     switch (e.key) {
@@ -77,8 +74,12 @@ const AutocompleteInput = <T,>(props: Props<T>) => {
         break
       case "Enter":
         if (selectedIndex === undefined) {
+          if (suggestions.length > 0) {
+            props.onChange(suggestions[0])
+          }
         } else {
           setInputQuery(props.getItemValue(suggestions[selectedIndex]))
+          props.onChange(suggestions[selectedIndex])
           setSuggestionsVisible(false)
         }
         break
@@ -92,6 +93,7 @@ const AutocompleteInput = <T,>(props: Props<T>) => {
     setSelectedIndex(undefined)
     setSuggestionsVisible(true)
     setInputQuery(e.target.value)
+    props.onQueryChange(e.target.value)
   }
 
   return (
