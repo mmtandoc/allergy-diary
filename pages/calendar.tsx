@@ -105,6 +105,7 @@ const CalendarPage = () => {
     mutate(
       `/api/users/${user.id}/entries`,
       async (entries: EntryWithMunicipality[]) => {
+        console.log(newEntry)
         const updatedEntry = await axios.put(
           `/api/users/${user.id}/entries/${selectedDay.toUTC()}`,
           newEntry,

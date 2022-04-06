@@ -21,8 +21,6 @@ const AutocompleteInput = <T,>(props: Props<T>) => {
 
   const [selectedIndex, setSelectedIndex] = useState<number | undefined>()
 
-  console.log(`selectedIndex = ${selectedIndex}`)
-
   const [suggestionsVisible, setSuggestionsVisible] = useState<boolean>(false)
 
   const handleSuggestionClick = (item: T) => {
@@ -46,7 +44,6 @@ const AutocompleteInput = <T,>(props: Props<T>) => {
   ))
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    console.log(selectedIndex)
     switch (e.key) {
       case "ArrowUp":
         setSuggestionsVisible(true)
@@ -69,7 +66,6 @@ const AutocompleteInput = <T,>(props: Props<T>) => {
           nextIndex = undefined
         }
 
-        console.log(`nextIndex = ${nextIndex}`)
         setSelectedIndex(nextIndex)
         break
       case "Enter":
@@ -86,7 +82,6 @@ const AutocompleteInput = <T,>(props: Props<T>) => {
       default:
         return
     }
-    console.log(selectedIndex)
   }
 
   const handleInputQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
