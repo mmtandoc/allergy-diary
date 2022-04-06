@@ -2,6 +2,7 @@ import React, { ChangeEventHandler, useState, useEffect } from "react"
 
 type Props<T> = {
   name: string
+  id?: string
   defaultItem?: T
   getItemValue: (item: T) => string
   renderSuggestion: (item: T) => JSX.Element
@@ -92,7 +93,7 @@ const AutocompleteInput = <T,>(props: Props<T>) => {
   }
 
   return (
-    <div className="autocomplete">
+    <div className="autocomplete" id={props.id}>
       <div style={{ display: "flex", flex: "100%" }}>
         <input
           name={props.name}

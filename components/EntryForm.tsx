@@ -125,8 +125,9 @@ const EntryForm = (props: Props) => {
   return (
     <div className="entry-container">
       <div className="form-input-group" style={{ flexDirection: "row" }}>
-        <label>IS EDITING</label>
+        <label htmlFor="is-editing-checkbox">IS EDITING</label>
         <input
+          id="is-editing-checkbox"
           name="isEditing"
           checked={isEditing}
           onChange={(e) => isEditing && setIsEditing(e.target.checked)}
@@ -136,7 +137,7 @@ const EntryForm = (props: Props) => {
       <input name="date" type="hidden" value={props.date.toFormat("y-MM-dd")} />
 
       <div className="form-input-group">
-        <label>Location</label>
+        <label htmlFor="municipality-autocomplete">Location</label>
         <div style={{ display: "flex", flexDirection: "row", gap: "1rem" }}>
           <span>
             {municipality === null ? "N/A" : getMunicipalityValue(municipality)}
@@ -148,6 +149,7 @@ const EntryForm = (props: Props) => {
         {municipalityInputVisible && (
           <AutocompleteInput
             name="municipality"
+            id="municipality-autocomplete"
             width="50"
             defaultItem={municipality ?? undefined}
             items={getMunicipalities(municipalitySearchQuery)}
@@ -160,16 +162,18 @@ const EntryForm = (props: Props) => {
         )}
       </div>
       <div className="form-input-group">
-        <label>Allergy Severity</label>
+        <label htmlFor="allergy-rater">Allergy Severity</label>
         <AllergyRater
+          id="allergy-rater"
           value={entryData?.rating}
           disabled={!isEditing}
           onChange={(val) => mutateEntrySet("rating", val)}
         />
       </div>
       <div className="form-input-group">
-        <label>Notes</label>
+        <label htmlFor="notes-textarea">Notes</label>
         <textarea
+          id="notes-textarea"
           name="notes"
           placeholder="Add any notes here."
           value={entryData?.notes ?? ""}

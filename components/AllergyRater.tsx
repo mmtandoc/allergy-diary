@@ -1,9 +1,10 @@
 import Slider from "rc-slider"
 import "rc-slider/assets/index.css"
-import React, { useEffect, useState } from "react"
+import React from "react"
 
 type Props = {
   value: number
+  id?: string
   onChange?: (value: number) => void
   disabled?: boolean
 }
@@ -31,7 +32,7 @@ const AllergyRater = (props: Props) => {
     return `rgba(${Math.round(r)},${Math.round(g)},0,1)`
   }
   return (
-    <div className="allergy-rater">
+    <div id={props.id} className="allergy-rater">
       <Slider
         className="allergy-slider"
         value={props.value}
