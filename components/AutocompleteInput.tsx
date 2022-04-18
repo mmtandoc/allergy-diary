@@ -139,9 +139,13 @@ const SuggestionItem = <T,>(props: {
     props.onClick?.(props.item)
   }
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events
     <li
+      role="option"
       className={props.isSelected ? "selected" : undefined}
+      onMouseDown={(e) => e.preventDefault()}
       onClick={handleClick}
+      aria-selected={props.isSelected}
     >
       {props.renderSuggestion(props.item)}
     </li>
