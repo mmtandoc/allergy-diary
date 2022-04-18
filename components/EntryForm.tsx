@@ -116,6 +116,8 @@ const EntryForm = (props: Props) => {
 
   const handleMunicipalityChange = (item: MunicipalityWithParents) => {
     setMunicipality(item)
+    mutateEntrySet("municipalityId", item.id)
+    mutateEntrySet("municipality", item)
   }
 
   const handleMunicipalityQueryChange = (query: string) => {
@@ -143,7 +145,7 @@ const EntryForm = (props: Props) => {
             {municipality === null ? "N/A" : getMunicipalityValue(municipality)}
           </span>
           <button onClick={handleLocationEditClick} disabled={!isEditing}>
-            Edit
+            {municipalityInputVisible ? "Set" : "Edit"}
           </button>
         </div>
         {municipalityInputVisible && (
