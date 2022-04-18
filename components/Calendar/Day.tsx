@@ -31,13 +31,24 @@ const Day = (props: Props) => {
   //onMouseEnter={toggleHover}
   //onMouseLeave={toggleHover}
   return (
+    /*
+  hidden={!props.currentMonth}
+  aria-hidden={!props.currentMonth}
+
+*/
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events
     <div
       className={className}
       style={{ gridColumn: props.date.weekday.toString() }}
+      title={props.date.toLocaleString(DateTime.DATE_FULL)}
       onClick={() => props.setSelectedDay(props.date)}
-      hidden={!props.currentMonth}
+      aria-selected={isSelected}
+      role="gridcell"
+      tabIndex={0}
     >
-      <div className="date-label">{props.date.day}</div>
+      <div aria-label="day" className="date-label">
+        {props.date.day}
+      </div>
       {props.renderDayContent?.(props.date)}
       <style jsx>{`
         .calendar-day .date-label {
@@ -45,8 +56,7 @@ const Day = (props: Props) => {
           margin-left: 5%;
         }
         .calendar-day:not(.curr-month) {
-          color: rgb(179, 179, 179);
-          display: none;
+          opacity: 20%;
         }
         .calendar-day.today {
           background-color: rgb(206, 229, 236) !important;

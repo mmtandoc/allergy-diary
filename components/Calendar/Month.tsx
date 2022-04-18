@@ -20,7 +20,8 @@ const Month = (props: Props) => {
       </div>,
     )
   }
-  const days: ReactElement[] = []
+
+  const weeks: ReactElement[] = []
 
   //const startDate = props.date.startOf("month").startOf("week")
   const startDate = props.currentMonth.startOf("month").startOf("week")
@@ -29,38 +30,67 @@ const Month = (props: Props) => {
 
   startDate
     .until(endDate)
-    .splitBy({ days: 1 })
-    .map((value: Interval, index: number) => {
-      const cellDate = value.start
+    .splitBy({ weeks: 1 })
+    .map((weekValue: Interval, weekIndex: number) => {
+      const days: ReactElement[] = []
+      const weekStart = weekValue.start
+      weekStart
+        .until(weekStart.endOf("week"))
+        .splitBy({ days: 1 })
+        .map((dayValue: Interval, dayIndex: number) => {
+          const cellDate = dayValue.start
 
-      days.push(
-        <Day
-          date={cellDate}
-          selectedDay={props.selectedDay}
-          setSelectedDay={props.setSelectedDay}
-          key={index}
-          currentMonth={cellDate.hasSame(props.currentMonth, "month")}
-          renderDayContent={props.renderDayContent}
-        />,
+          days.push(
+            <Day
+              date={cellDate}
+              selectedDay={props.selectedDay}
+              setSelectedDay={props.setSelectedDay}
+              key={dayIndex}
+              currentMonth={cellDate.hasSame(props.currentMonth, "month")}
+              renderDayContent={props.renderDayContent}
+            />,
+          )
+        })
+      weeks.push(
+        <div className="calendar-week" role="row" key={weekIndex}>
+          {days}
+        </div>,
       )
     })
 
   return (
-    <div className="calendar-month">
-      {dayLabels}
-      {days}
+    <div className="calendar-month" role="grid">
+      <div className="calendar-day-labels" role="row">
+        {dayLabels}
+      </div>
+
+      {weeks}
       <style jsx>{`
         .calendar-month {
-          display: grid;
-          grid-template-columns: repeat(7, 1fr);
-          grid-template-rows: auto repeat(6, 1fr);
           flex-grow: 1;
         }
-        .calendar-month > * {
+        .calendar-month {
           align-items: left;
           display: flex;
           flex-direction: column;
-          justify-content: center;
+          flex: 1 1 0%;
+        }
+
+        .calendar-month > :global(.calendar-week),
+        .calendar-day-labels {
+          display: flex;
+          flex-direction: row;
+          flex: 1 1 0%;
+        }
+
+        .calendar-day-labels {
+          flex-basis: 0;
+          flex-grow: 0;
+        }
+
+        :global(.calendar-day),
+        :global(.calendar-day-label) {
+          width: 100%;
         }
       `}</style>
     </div>
