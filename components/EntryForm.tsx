@@ -5,7 +5,7 @@ import { SearchFuzzyResponse } from "types/azureMaps/search/SearchFuzzyResponse"
 import { DateTime } from "luxon"
 import React, { ChangeEvent, useState } from "react"
 import { EntryWithMunicipality, MunicipalityWithParents } from "types/types"
-import AutocompleteInput from "components/AutocompleteInput"
+import MunicipalityAutocomplete from "./MunicipalityAutocomplete"
 
 type Props = {
   date: DateTime
@@ -32,14 +32,7 @@ const EntryForm = (props: Props) => {
     props.entryData ?? defaultEntryData,
   )
 
-  const [municipalitySearchQuery, setMunicipalitySearchQuery] = useState(
-    `${entryData.municipality?.name}, ${entryData.municipality?.subdivision?.abbreviation}, ${entryData.municipality?.country.name}`,
-  )
-
   const [municipality, setMunicipality] = useState(entryData.municipality)
-
-  const [municipalityInputVisible, setMunicipalityInputVisible] =
-    useState(false)
 
   const mutateEntrySet = (name: string, value: unknown) => {
     if (!isEditing) return
@@ -66,15 +59,15 @@ const EntryForm = (props: Props) => {
     setIsEditing(!isEditing)
   }
 
-  const onSearchClick = async () => {
-    if (!municipalitySearchQuery) {
+  const municipalitySearch = async (query: string) => {
+    if (!query) {
       return
     }
 
     const typeahead = false
 
     const response = await axios.get<SearchFuzzyResponse>(
-      `https://atlas.microsoft.com/search/fuzzy/json?subscription-key=Fg6JeHgHsf2jtBliDtBgcyCqc8etrmx2XtVgfXTojZI&api-version=1.0&query=${municipalitySearchQuery}&typeahead=${typeahead}&limit=10&idxSet=Geo`,
+      `https://atlas.microsoft.com/search/fuzzy/json?subscription-key=Fg6JeHgHsf2jtBliDtBgcyCqc8etrmx2XtVgfXTojZI&api-version=1.0&query=${query}&typeahead=${typeahead}&limit=10&idxSet=Geo`,
     )
 
     const municipalities = response.data.results.filter(
@@ -83,45 +76,10 @@ const EntryForm = (props: Props) => {
     console.log(municipalities)
   }
 
-  const handleLocationEditClick = () => {
-    setMunicipalityInputVisible(!municipalityInputVisible)
-  }
-
-  const getMunicipalityValue = (item: MunicipalityWithParents): string =>
-    [item.name, item.subdivision?.abbreviation, item.country.name].join(", ")
-
-  /*
-  TODO: Implement getting municipalities from database
-  https://stackoverflow.com/questions/56796489/how-can-i-match-up-user-inputs-to-ambiguous-city-names
-  */
-  const getMunicipalities = (query: string): MunicipalityWithParents[] => {
-    const allMunicipalities: MunicipalityWithParents[] = JSON.parse(
-      '[{"id":1,"name":"Midland","localName":null,"subdivisionId":1,"countryCode":"US","freeformAddress":"Midland, TX","latitude":31.99743,"longitude":-102.07804,"subdivision":{"id":1,"name":"Texas","abbreviation":"TX","countryCode":"US","parentSubdivisionId":null},"country":{"code":"US","name":"United States","codeISO3":"USA"}},{"id":2,"name":"Milton","localName":null,"subdivisionId":2,"countryCode":"CA","freeformAddress":"Milton ON","latitude":43.51349,"longitude":-79.8828,"subdivision":{"id":2,"name":"Ontario","abbreviation":"ON","countryCode":"CA","parentSubdivisionId":null},"country":{"code":"CA","name":"Canada","codeISO3":"CAN"}},{"id":3,"name":"Austin","localName":null,"subdivisionId":1,"countryCode":"US","freeformAddress":"Austin, TX","latitude":30.26498,"longitude":-97.7466,"subdivision":{"id":1,"name":"Texas","abbreviation":"TX","countryCode":"US","parentSubdivisionId":null},"country":{"code":"US","name":"United States","codeISO3":"USA"}}]',
-    )
-
-    const matches = allMunicipalities.filter((m) => {
-      return getMunicipalityValue(m).includes(query)
-    })
-
-    return matches
-  }
-
-  const renderMunicipalitySuggestion = (item: MunicipalityWithParents) => (
-    <div>
-      {[item.name, item.subdivision?.abbreviation, item.country.name].join(
-        ", ",
-      )}
-    </div>
-  )
-
   const handleMunicipalityChange = (item: MunicipalityWithParents) => {
     setMunicipality(item)
     mutateEntrySet("municipalityId", item.id)
     mutateEntrySet("municipality", item)
-  }
-
-  const handleMunicipalityQueryChange = (query: string) => {
-    setMunicipalitySearchQuery(query)
   }
 
   return (
@@ -140,28 +98,11 @@ const EntryForm = (props: Props) => {
 
       <div className="form-input-group">
         <label htmlFor="municipality-autocomplete">Location</label>
-        <div style={{ display: "flex", flexDirection: "row", gap: "1rem" }}>
-          <span>
-            {municipality === null ? "N/A" : getMunicipalityValue(municipality)}
-          </span>
-          <button onClick={handleLocationEditClick} disabled={!isEditing}>
-            {municipalityInputVisible ? "Set" : "Edit"}
-          </button>
-        </div>
-        {municipalityInputVisible && (
-          <AutocompleteInput
-            name="municipality"
-            id="municipality-autocomplete"
-            width="50"
-            defaultItem={municipality ?? undefined}
-            items={getMunicipalities(municipalitySearchQuery)}
-            getItemValue={getMunicipalityValue}
-            renderSuggestion={renderMunicipalitySuggestion}
-            onChange={handleMunicipalityChange}
-            onQueryChange={handleMunicipalityQueryChange}
-            readOnly={!isEditing}
-          />
-        )}
+        <MunicipalityAutocomplete
+          municipality={municipality}
+          onMunicipalityChange={handleMunicipalityChange}
+          readOnly={!isEditing}
+        />
       </div>
       <div className="form-input-group">
         <label htmlFor="allergy-rater">Allergy Severity</label>
