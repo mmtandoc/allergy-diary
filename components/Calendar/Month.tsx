@@ -80,7 +80,7 @@ const Month = (props: Props) => {
         .calendar-day-labels {
           display: flex;
           flex-direction: row;
-          flex: 1 1 0%;
+          flex: 1 0;
         }
 
         .calendar-day-labels {
@@ -91,6 +91,14 @@ const Month = (props: Props) => {
         :global(.calendar-day),
         :global(.calendar-day-label) {
           width: 100%;
+        }
+      `}</style>
+      <style jsx>{`
+        .calendar-month > .calendar-day-labels {
+          flex-basis: 5%;
+        }
+        .calendar-month > :global(.calendar-week) {
+          flex-basis: ${(100 - 5) / weeks.length}%;
         }
       `}</style>
     </div>

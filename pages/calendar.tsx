@@ -133,7 +133,7 @@ const CalendarPage = () => {
           <Calendar
             selectedDay={selectedDay}
             onDateChange={setSelectedDay}
-            style={{ flex: "3" }}
+            style={{ flex: "4 0" }}
             renderDayContent={renderDayContent}
           />
           <div className="conditions-panel">
@@ -172,6 +172,7 @@ const CalendarPage = () => {
                 margin-left: 1rem;
                 border-top: none;
                 border-left: 1px solid lightgray;
+                flex: 1 0;
               }
             }
           `}</style>
