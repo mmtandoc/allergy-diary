@@ -15,13 +15,6 @@ const MunicipalityAutocomplete = (props: Props) => {
     `${municipality?.name}, ${municipality?.subdivision?.abbreviation}, ${municipality?.country.name}`,
   )
 
-  const [municipalityInputVisible, setMunicipalityInputVisible] =
-    useState<boolean>(false)
-
-  const handleLocationEditClick = () => {
-    setMunicipalityInputVisible(!municipalityInputVisible)
-  }
-
   const handleMunicipalityQueryChange = (query: string) => {
     setMunicipalitySearchQuery(query)
   }
@@ -54,30 +47,18 @@ https://stackoverflow.com/questions/56796489/how-can-i-match-up-user-inputs-to-a
   }
 
   return (
-    <>
-      <div style={{ display: "flex", flexDirection: "row", gap: "1rem" }}>
-        <span>
-          {municipality === null ? "N/A" : getMunicipalityValue(municipality)}
-        </span>
-        <button onClick={handleLocationEditClick} disabled={props.readOnly}>
-          {municipalityInputVisible ? "Set" : "Edit"}
-        </button>
-      </div>
-      {municipalityInputVisible && (
-        <AutocompleteInput
-          name="municipality"
-          id="municipality-autocomplete"
-          width="50"
-          defaultItem={municipality ?? undefined}
-          items={getMunicipalities(municipalitySearchQuery)}
-          getItemValue={getMunicipalityValue}
-          renderSuggestion={renderMunicipalitySuggestion}
-          onChange={props.onMunicipalityChange}
-          onQueryChange={handleMunicipalityQueryChange}
-          readOnly={props.readOnly}
-        />
-      )}
-    </>
+    <AutocompleteInput
+      name="municipality"
+      id="municipality-autocomplete"
+      width="50"
+      defaultItem={municipality ?? undefined}
+      items={getMunicipalities(municipalitySearchQuery)}
+      getItemValue={getMunicipalityValue}
+      renderSuggestion={renderMunicipalitySuggestion}
+      onChange={props.onMunicipalityChange}
+      onQueryChange={handleMunicipalityQueryChange}
+      readOnly={props.readOnly}
+    />
   )
 }
 

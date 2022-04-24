@@ -122,6 +122,12 @@ const AutocompleteInput = <T,>(props: Props<T>) => {
           flex: 100%;
           width: auto;
         }
+
+        input:read-only {
+          outline: none;
+          border-color: transparent;
+          background-color: transparent;
+        }
       `}</style>
     </div>
   )
