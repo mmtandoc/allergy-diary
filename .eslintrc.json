@@ -1,7 +1,8 @@
 {
   "plugins": [
     "@typescript-eslint",
-    "jest"
+    "jest",
+    "jsx-a11y"
   ],
   "extends": [
     "next",
@@ -9,7 +10,8 @@
     "plugin:@typescript-eslint/recommended",
     "prettier",
     "plugin:jest/recommended",
-    "plugin:jest/style"
+    "plugin:jest/style",
+    "plugin:jsx-a11y/recommended"
   ],
   "rules": {
     "@typescript-eslint/explicit-module-boundary-types": "off",
