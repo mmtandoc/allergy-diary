@@ -30,8 +30,8 @@ model Entry {
   date           DateTime      @default(now()) @db.Date
   rating         Int           @default(0)
   notes          String?       
-  municipality   Municipality? @relation(fields: [municipalityId], references: [id])
-  municipalityId Int?
+  municipality   Municipality @relation(fields: [municipalityId], references: [id])
+  municipalityId Int
 
   @@id([userId, date])
   @@map(name: "entries")
