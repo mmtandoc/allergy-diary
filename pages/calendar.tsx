@@ -41,40 +41,68 @@ axios.interceptors.response.use((originalResponse) => {
 const CalendarPage = () => {
   const { user } = useUser()
   const [selectedDay, setSelectedDay] = useState(DateTime.now())
-  const [selectedMunicipality, setSelectedMunicipality] = useState(
-    user.mainMunicipalityId,
-  )
-  //const [forecastData, setForecastData] = useState(props.forecastData)
-  //const [forecasts, setForecasts] = useState(props.forecasts)
 
   const { mutate } = useSWRConfig()
-  const { data: forecastData, error: forecastError } = useSwr(
-    `/api/municipalities/${selectedMunicipality}/pollen`,
-  )
 
-  const { data: entriesData, error: entriesError } = useSwr(
+  const {
+    data: entries,
+    error: entriesError,
+  }: { data?: EntryWithMunicipality[]; error?: any } = useSwr(
     `/api/users/${user.id}/entries`,
   )
 
-  if (forecastError || entriesError) return <div>Failed to load...</div>
-  if (!forecastData || !entriesData) return <div>Loading...</div>
+  let enteredMunicipalityIds: number[]
 
-  const forecasts: ForecastWithPollen[] = forecastData
-  const entries: EntryWithMunicipality[] = entriesData
+  const {
+    data: forecastsData,
+    error: forecastsError,
+  }: { data?: ForecastWithPollen[][]; error?: any } = useSwr(() => {
+    if (!entries || entriesError) {
+      return false
+    }
 
-  const getForecastByDate = (
-    date: DateTime,
-  ): ForecastWithPollen | undefined => {
-    return forecasts.find((f) =>
-      date.hasSame(DateTime.fromJSDate(f.date, { zone: "UTC" }), "day"),
+    enteredMunicipalityIds = Array.from(
+      new Set(entries.map((e) => e.municipalityId)).values(),
     )
-  }
+
+    const forecastUrls = enteredMunicipalityIds.map(
+      (id) => `/api/municipalities/${id}/pollen`,
+    )
+
+    return forecastUrls
+  })
+
+  if (forecastsError || entriesError) return <div>Failed to load...</div>
+  if (!forecastsData || !entries) return <div>Loading...</div>
+
+  const forecasts: Map<number, ForecastWithPollen[]> = new Map(
+    forecastsData.map((v, i) => [enteredMunicipalityIds[i], v]),
+  )
 
   const getEntryByDate = (
     date: DateTime,
   ): EntryWithMunicipality | undefined => {
     return entries.find((e) =>
       date.hasSame(DateTime.fromJSDate(e.date, { zone: "UTC" }), "day"),
+    )
+  }
+
+  const getForecastByDate = (
+    date: DateTime,
+  ): ForecastWithPollen | undefined => {
+    const entry = getEntryByDate(date)
+    // If entry for date exists, get forecast for the municipality of the entry, otherwise get forecast from default municipality
+    const municipalityId = entry
+      ? entry.municipalityId
+      : user.mainMunicipalityId
+    const municipalityForecast = forecasts.get(municipalityId)
+
+    if (!municipalityForecast) {
+      return undefined
+    }
+
+    return municipalityForecast.find((f) =>
+      date.hasSame(DateTime.fromJSDate(f.date, { zone: "UTC" }), "day"),
     )
   }
 
