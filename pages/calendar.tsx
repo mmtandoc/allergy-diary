@@ -119,7 +119,7 @@ const CalendarPage = () => {
                 "day",
               ),
           ),
-          updatedEntry,
+          updatedEntry.data,
         ]
       },
     )
