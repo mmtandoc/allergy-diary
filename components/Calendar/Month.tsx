@@ -4,7 +4,7 @@ import Day from "./Day"
 
 type Props = {
   selectedDay: DateTime
-  setSelectedDay: React.Dispatch<React.SetStateAction<DateTime>>
+  onSelectedDayChange: (day: DateTime) => void
   currentMonth: DateTime
   renderDayContent?: (date: DateTime) => ReactElement | void
 }
@@ -44,7 +44,7 @@ const Month = (props: Props) => {
             <Day
               date={cellDate}
               selectedDay={props.selectedDay}
-              setSelectedDay={props.setSelectedDay}
+              onSelectedDayChange={props.onSelectedDayChange}
               key={dayIndex}
               currentMonth={cellDate.hasSame(props.currentMonth, "month")}
               renderDayContent={props.renderDayContent}

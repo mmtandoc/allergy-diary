@@ -6,34 +6,43 @@ import CalendarHeader from "./CalendarHeader"
 type Props = {
   selectedDay: DateTime
   currentMonth?: DateTime
-  onDateChange?: (date: DateTime) => void
+  onSelectedDayChange: (day: DateTime) => void
   style?: React.CSSProperties
   renderDayContent?: (date: DateTime) => ReactElement | void
 }
 
 const Calendar = (props: Props) => {
-  const { onDateChange } = props
+  //const { onDateChange } = props
 
-  const [selectedDay, setSelectedDay] = useState(props.selectedDay)
+  const { selectedDay, onSelectedDayChange } = props
   const [currentMonth, setCurrentMonth] = useState(
     props.currentMonth ?? selectedDay.startOf("month"),
   )
 
-  useEffect(() => {
+  const handleSelectedDayChange = (day: DateTime) => {
+    onSelectedDayChange(day)
+    setCurrentMonth(day)
+  }
+
+  const handleMonthChange = (month: DateTime) => {
+    setCurrentMonth(month)
+  }
+
+  /*useEffect(() => {
     onDateChange?.(selectedDay)
-  }, [selectedDay, onDateChange])
+  }, [selectedDay, onDateChange])*/
 
   return (
     <div className="calendar" style={props.style}>
       <CalendarHeader
         selectedDay={selectedDay}
-        setSelectedDay={setSelectedDay}
+        onSelectedDayChange={handleSelectedDayChange}
         currentMonth={currentMonth}
-        setCurrentMonth={setCurrentMonth}
+        onCurrentMonthChange={handleMonthChange}
       />
       <Month
         selectedDay={selectedDay}
-        setSelectedDay={setSelectedDay}
+        onSelectedDayChange={handleSelectedDayChange}
         currentMonth={currentMonth}
         renderDayContent={props.renderDayContent}
       />

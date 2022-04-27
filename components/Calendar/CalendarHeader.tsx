@@ -3,16 +3,16 @@ import { DateTime } from "luxon"
 
 type Props = {
   selectedDay: DateTime
-  setSelectedDay: React.Dispatch<React.SetStateAction<DateTime>>
+  onSelectedDayChange: (day: DateTime) => void
   currentMonth: DateTime
-  setCurrentMonth: React.Dispatch<React.SetStateAction<DateTime>>
+  onCurrentMonthChange: (day: DateTime) => void
 }
 
 const CalendarHeader = (props: Props) => {
-  const onTodayClick = () => {
+  const handleTodayClick = () => {
     const today = DateTime.now()
-    props.setSelectedDay(today)
-    props.setCurrentMonth(today)
+    props.onSelectedDayChange(today)
+    props.onCurrentMonthChange(today)
   }
 
   return (
@@ -20,14 +20,14 @@ const CalendarHeader = (props: Props) => {
       <div className="calendar-month-control">
         <button
           onClick={() =>
-            props.setCurrentMonth(props.currentMonth.minus({ months: 1 }))
+            props.onCurrentMonthChange(props.currentMonth.minus({ months: 1 }))
           }
         >
           &lt;
         </button>
         <button
           onClick={() =>
-            props.setCurrentMonth(props.currentMonth.plus({ months: 1 }))
+            props.onCurrentMonthChange(props.currentMonth.plus({ months: 1 }))
           }
         >
           &gt;
@@ -36,7 +36,7 @@ const CalendarHeader = (props: Props) => {
       <div className="month-label">
         {props.currentMonth.monthLong} {props.currentMonth.year}
       </div>
-      <button className="today-button" onClick={onTodayClick}>
+      <button className="today-button" onClick={handleTodayClick}>
         Today
       </button>
       <style jsx>{`

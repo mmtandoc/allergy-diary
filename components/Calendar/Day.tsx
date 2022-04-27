@@ -4,7 +4,7 @@ import { DateTime } from "luxon"
 type Props = {
   date: DateTime
   selectedDay: DateTime
-  setSelectedDay: React.Dispatch<React.SetStateAction<DateTime>>
+  onSelectedDayChange: (day: DateTime) => void
   hover: boolean
   currentMonth: boolean
   renderDayContent?: (date: DateTime) => ReactElement | void
@@ -41,7 +41,7 @@ const Day = (props: Props) => {
       className={className}
       style={{ gridColumn: props.date.weekday.toString() }}
       title={props.date.toLocaleString(DateTime.DATE_FULL)}
-      onClick={() => props.setSelectedDay(props.date)}
+      onClick={() => props.onSelectedDayChange(props.date)}
       aria-selected={isSelected}
       role="gridcell"
       tabIndex={0}
