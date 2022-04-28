@@ -1,8 +1,6 @@
-import singletonRouter, { useRouter } from "next/router"
-import NextLink from "next/link"
-import { render, act, fireEvent, screen, waitFor } from "@testing-library/react"
-import mockRouter from "next-router-mock"
+import { act, render, screen } from "@testing-library/react"
 import Header from "components/Header"
+import mockRouter from "next-router-mock"
 
 jest.mock("next/dist/client/router", () => require("next-router-mock"))
 
@@ -23,8 +21,10 @@ describe("Home", () => {
     })
 
     expect(homeLink).toBeInTheDocument()
+    expect(homeLink).toHaveAttribute("href", "/")
 
     expect(calendarLink).toBeInTheDocument()
+    expect(calendarLink).toHaveAttribute("href", "/calendar")
   })
 
   it("detects link of current page", () => {
