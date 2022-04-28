@@ -160,7 +160,7 @@ const CalendarPage = () => {
         <div id="content">
           <Calendar
             selectedDay={selectedDay}
-            onDateChange={setSelectedDay}
+            onSelectedDayChange={setSelectedDay}
             style={{ flex: "4 0" }}
             renderDayContent={renderDayContent}
           />

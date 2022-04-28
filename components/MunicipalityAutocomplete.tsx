@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { MunicipalityWithParents } from "types/types"
 import AutocompleteInput from "./AutocompleteInput"
+import { withAsync } from "./WithAsync"
 
 type Props = {
   municipality: MunicipalityWithParents
@@ -8,16 +9,17 @@ type Props = {
   readOnly?: boolean
 }
 
+const AsyncAutocomplete = withAsync<MunicipalityWithParents>(AutocompleteInput)
+
 const MunicipalityAutocomplete = (props: Props) => {
   const municipality = props.municipality
+
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [options, setOptions] = useState<MunicipalityWithParents[]>([])
 
   const [municipalitySearchQuery, setMunicipalitySearchQuery] = useState(
     `${municipality?.name}, ${municipality?.subdivision?.abbreviation}, ${municipality?.country.name}`,
   )
-
-  const handleMunicipalityQueryChange = (query: string) => {
-    setMunicipalitySearchQuery(query)
-  }
 
   const renderMunicipalitySuggestion = (item: MunicipalityWithParents) => (
     <div>
@@ -46,6 +48,34 @@ https://stackoverflow.com/questions/56796489/how-can-i-match-up-user-inputs-to-a
     return matches
   }
 
+  const handleSearch = (query: string) => {
+    setIsLoading(true)
+    const sleep = (ms: number) => {
+      return new Promise((resolve) => setTimeout(resolve, ms))
+    }
+    sleep(300).then(() => {
+      setIsLoading(false)
+      setOptions(getMunicipalities(query))
+    })
+  }
+
+  return (
+    <AsyncAutocomplete
+      isLoading={isLoading}
+      onSearch={handleSearch}
+      name="municipality"
+      id="municipality-autocomplete"
+      width="50"
+      minLength={1}
+      defaultItem={municipality ?? undefined}
+      items={options}
+      getItemValue={getMunicipalityValue}
+      renderSuggestion={renderMunicipalitySuggestion}
+      onItemChange={props.onMunicipalityChange}
+      readOnly={props.readOnly}
+    />
+  )
+  /*
   return (
     <AutocompleteInput
       name="municipality"
@@ -59,7 +89,7 @@ https://stackoverflow.com/questions/56796489/how-can-i-match-up-user-inputs-to-a
       onQueryChange={handleMunicipalityQueryChange}
       readOnly={props.readOnly}
     />
-  )
+  )*/
 }
 
 MunicipalityAutocomplete.defaultProps = {

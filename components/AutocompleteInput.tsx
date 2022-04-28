@@ -1,19 +1,20 @@
 import React, { ChangeEventHandler, useState, useEffect } from "react"
 
-type Props<T> = {
+export type AutocompleteProps<T> = {
   name: string
   id?: string
   defaultItem?: T
   getItemValue: (item: T) => string
   renderSuggestion: (item: T) => JSX.Element
   items: T[]
-  onChange: (val: T) => void
-  onQueryChange: (query: string) => void
+  onItemChange: (val: T) => void
+  onQueryChange?: (query: string) => void
   width?: string | number
-  readOnly: boolean
+  minLength: number
+  readOnly?: boolean
 }
 
-const AutocompleteInput = <T,>(props: Props<T>) => {
+const AutocompleteInput = <T,>(props: AutocompleteProps<T>) => {
   const [inputQuery, setInputQuery] = useState(
     props.defaultItem == null
       ? undefined
@@ -27,7 +28,7 @@ const AutocompleteInput = <T,>(props: Props<T>) => {
   const handleSuggestionClick = (item: T) => {
     setInputQuery(props.getItemValue(item))
     setSuggestionsVisible(false)
-    props.onChange(item)
+    props.onItemChange(item)
   }
 
   const suggestions: T[] = props.items
@@ -72,11 +73,11 @@ const AutocompleteInput = <T,>(props: Props<T>) => {
       case "Enter":
         if (selectedIndex === undefined) {
           if (suggestions.length > 0) {
-            props.onChange(suggestions[0])
+            props.onItemChange(suggestions[0])
           }
         } else {
           setInputQuery(props.getItemValue(suggestions[selectedIndex]))
-          props.onChange(suggestions[selectedIndex])
+          props.onItemChange(suggestions[selectedIndex])
           setSuggestionsVisible(false)
         }
         break
@@ -89,7 +90,7 @@ const AutocompleteInput = <T,>(props: Props<T>) => {
     setSelectedIndex(undefined)
     setSuggestionsVisible(true)
     setInputQuery(e.target.value)
-    props.onQueryChange(e.target.value)
+    props.onQueryChange?.(e.target.value)
   }
 
   return (
@@ -107,12 +108,15 @@ const AutocompleteInput = <T,>(props: Props<T>) => {
           onBlur={() => setSuggestionsVisible(false)}
         />
       </div>
-      {suggestions.length !== 0 && suggestionsVisible && (
-        <SuggestionsList
-          suggestions={suggestionItems}
-          selectedIndex={selectedIndex}
-        ></SuggestionsList>
-      )}
+      {inputQuery &&
+        inputQuery.length >= props.minLength &&
+        suggestions.length !== 0 &&
+        suggestionsVisible && (
+          <SuggestionsList
+            suggestions={suggestionItems}
+            selectedIndex={selectedIndex}
+          ></SuggestionsList>
+        )}
       <style jsx>{`
         .autocomplete {
           position: relative;
@@ -201,7 +205,8 @@ const SuggestionsList = (props: {
 AutocompleteInput.defaultProps = {
   readOnly: false,
   width: 50,
-  onChange: () => undefined,
+  onItemChange: () => undefined,
+  minLength: 3,
 }
 
 export default AutocompleteInput

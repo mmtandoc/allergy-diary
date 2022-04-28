@@ -75,7 +75,6 @@ const Day = (props: Props) => {
 Day.defaultProps = {
   hover: false,
   currentMonth: true,
-  onChange: () => null,
 }
 
 export default React.memo(Day)
