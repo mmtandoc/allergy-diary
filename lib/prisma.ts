@@ -12,7 +12,21 @@ declare global {
 }
 
 export const prisma =
-  global.prisma || new PrismaClient({ log: ["query", "info", "warn", "error"] })
+  global.prisma ||
+  new PrismaClient({
+    log: [
+      { emit: "stdout", level: "query" },
+      { emit: "stdout", level: "info" },
+      { emit: "stdout", level: "warn" },
+      { emit: "stdout", level: "error" },
+    ],
+  })
+
+/*
+prisma.$on("query", (e) => {
+  console.log("query - " + e.query)
+  console.log("Params: " + e.params)
+})*/
 
 if (process.env.NODE_ENV !== "production") global.prisma = prisma
 /*
