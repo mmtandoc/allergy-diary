@@ -67,7 +67,7 @@ const EntryForm = (props: Props) => {
     const typeahead = false
 
     const response = await axios.get<SearchFuzzyResponse>(
-      `https://atlas.microsoft.com/search/fuzzy/json?subscription-key=Fg6JeHgHsf2jtBliDtBgcyCqc8etrmx2XtVgfXTojZI&api-version=1.0&query=${query}&typeahead=${typeahead}&limit=10&idxSet=Geo`,
+      `https://atlas.microsoft.com/search/fuzzy/json?subscription-key=qjFcJQnRe5T3_7UOMUUUbk1AAoZws3qxNM0amzfr6sw&api-version=1.0&query=${query}&typeahead=${typeahead}&limit=10&idxSet=Geo`,
     )
 
     const municipalities = response.data.results.filter(

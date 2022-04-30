@@ -39,7 +39,7 @@ export default async function municipalitiesHandler(
     }
     case "POST": {
       const results = await axios.get(
-        `https://atlas.microsoft.com/search/fuzzy/json?api-version=1.0&subscription-key=${process.env.AZURE_API_KEY}&idxSet=Geo&query=${query.name},${query.country}`,
+        `https://atlas.microsoft.com/search/fuzzy/json?api-version=1.0&subscription-key=${process.env.AZURE_MAPS_API_KEY}&idxSet=Geo&query=${query.name},${query.country}`,
       )
 
       type Geo = {

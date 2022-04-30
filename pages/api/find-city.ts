@@ -18,7 +18,7 @@ export default async function handler(
   }
 
   const response = await axios.get<SearchFuzzyResponse>(
-    `https://atlas.microsoft.com/search/fuzzy/json?api-version=1.0&subscription-key=Fg6JeHgHsf2jtBliDtBgcyCqc8etrmx2XtVgfXTojZI&idxSet=Geo&query=${locationQuery}&typeahead=true`,
+    `https://atlas.microsoft.com/search/fuzzy/json?api-version=1.0&subscription-key=${process.env.AZURE_MAPS_API_KEY}&idxSet=Geo&query=${locationQuery}&typeahead=true`,
   )
 
   const municipalities = response.data.results.filter(

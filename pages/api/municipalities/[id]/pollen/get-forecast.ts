@@ -31,7 +31,7 @@ export default async function getForecastHandler(
   const { latitude: lat, longitude: lon } = municipality
 
   const results = await axios(
-    `https://atlas.microsoft.com/weather/forecast/daily/json?api-version=1.0&query=${lat},${lon}&duration=15&subscription-key=${process.env.AZURE_API_KEY}`,
+    `https://atlas.microsoft.com/weather/forecast/daily/json?api-version=1.0&query=${lat},${lon}&duration=15&subscription-key=${process.env.AZURE_MAPS_API_KEY}`,
   )
   const data = results.data
 
