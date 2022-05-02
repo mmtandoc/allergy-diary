@@ -14,7 +14,8 @@ model User {
   id                 Int          @id @default(autoincrement())
   name               String
   email              String       @unique
-  password           String
+  passwordHash       String
+  passwordSalt       String
   createdAt          DateTime     @default(now()) @map(name: "created_at")
   updatedAt          DateTime     @updatedAt @map(name: "updated_at")
   entries            Entry[]
@@ -25,11 +26,11 @@ model User {
 }
 
 model Entry {
-  user           User          @relation(fields: [userId], references: [id])
+  user           User         @relation(fields: [userId], references: [id])
   userId         Int
-  date           DateTime      @default(now()) @db.Date
-  rating         Int           @default(0)
-  notes          String?       
+  date           DateTime     @default(now()) @db.Date
+  rating         Int          @default(0)
+  notes          String?
   municipality   Municipality @relation(fields: [municipalityId], references: [id])
   municipalityId Int
 
