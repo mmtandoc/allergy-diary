@@ -4,11 +4,12 @@ import EntryForm from "components/EntryForm"
 import Layout from "components/Layout"
 import MiniPollenConditions from "components/MiniPollenConditions"
 import PollenConditions from "components/PollenConditions"
-import { useUser } from "contexts/UserContext"
 import { DateTime } from "luxon"
+import { getSession, useSession } from "next-auth/react"
 import React, { useState } from "react"
 import useSwr, { useSWRConfig } from "swr"
 import { ForecastWithPollen, EntryWithMunicipality } from "types/types"
+import { GetServerSideProps } from "next"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleDates = (body: any) => {
@@ -39,10 +40,18 @@ axios.interceptors.response.use((originalResponse) => {
 })
 
 const CalendarPage = () => {
-  const { user } = useUser()
+  const { data: session, status } = useSession()
+
   const [selectedDay, setSelectedDay] = useState(DateTime.now())
 
   const { mutate } = useSWRConfig()
+
+  const user = session?.user ?? {
+    id: 0,
+    name: "NAME",
+    email: "email",
+    mainMunicipalityId: 0,
+  }
 
   const {
     data: entries,
@@ -72,7 +81,11 @@ const CalendarPage = () => {
     return forecastUrls
   })
 
-  if (forecastsError || entriesError) return <div>Failed to load...</div>
+  if (forecastsError || entriesError) {
+    console.log(forecastsError)
+    console.log(entriesError)
+    return <div>Failed to load...</div>
+  }
   if (!forecastsData || !entries) return <div>Loading...</div>
 
   const forecasts: Map<number, ForecastWithPollen[]> = new Map(
@@ -133,7 +146,6 @@ const CalendarPage = () => {
     mutate(
       `/api/users/${user.id}/entries`,
       async (entries: EntryWithMunicipality[]) => {
-        console.log(newEntry)
         const updatedEntry = await axios.put(
           `/api/users/${user.id}/entries/${selectedDay.toUTC()}`,
           newEntry,
@@ -210,4 +222,13 @@ const CalendarPage = () => {
   )
 }
 
+CalendarPage.requireAuth = true
+
 export default CalendarPage
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return {
+    props: {
+      session: await getSession(context),
+    },
+  }
+}

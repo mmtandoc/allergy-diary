@@ -1,6 +1,46 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react"
 import Link from "next/link"
 import { useRouter } from "next/router"
+import { signIn, signOut, useSession } from "next-auth/react"
+
+const UserInfo = () => {
+  const { data: session, status } = useSession()
+  if (session && status === "authenticated") {
+    return (
+      <div className="user-info">
+        <p>Signed in as {session?.user?.email ?? "ERROR"}</p>
+        <button
+          onClick={(e) => {
+            e.preventDefault()
+            signOut()
+          }}
+        >
+          Sign out
+        </button>
+        <style jsx>
+          {`
+            div.user-info: {
+              display: flex;
+              flex-direction: row;
+            }
+          `}
+        </style>
+      </div>
+    )
+  }
+
+  return (
+    <button
+      onClick={(e) => {
+        e.preventDefault()
+        signIn()
+      }}
+    >
+      Sign in
+    </button>
+  )
+}
 
 const Header = () => {
   const router = useRouter()
@@ -41,7 +81,16 @@ const Header = () => {
     </div>
   )
 
-  const right = null
+  const right = (
+    <div className="right">
+      <UserInfo />
+      <style jsx>{`
+        div.right {
+          margin-left: auto;
+        }
+      `}</style>
+    </div>
+  )
 
   return (
     <nav>
