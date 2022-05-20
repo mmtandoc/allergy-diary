@@ -12,8 +12,10 @@ export default async function currentPollenHandler(
   } = req
 
   if (method !== "GET") {
-    res.setHeader("Allow", ["GET"])
-    res.status(405).end(`Method ${method} Not Allowed`)
+    res
+      .setHeader("Allow", ["GET"])
+      .status(405)
+      .json({ error: { code: 405, message: `Method ${method} Not Allowed` } })
     return
   }
 

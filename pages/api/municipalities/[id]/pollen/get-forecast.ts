@@ -13,8 +13,10 @@ export default async function getForecastHandler(
   } = req
 
   if (method !== "GET") {
-    res.setHeader("Allow", ["GET"])
-    res.status(405).end(`Method ${method} Not Allowed`)
+    res
+      .setHeader("Allow", ["GET"])
+      .status(405)
+      .json({ error: { code: 405, message: `Method ${method} Not Allowed` } })
     return
   }
 
@@ -24,7 +26,9 @@ export default async function getForecastHandler(
   })
 
   if (!municipality) {
-    res.status(404).end(`Municipality ${id} Not Found`)
+    res
+      .status(404)
+      .json({ error: { code: 404, message: `Municipality ${id} Not Found` } })
     return
   }
 
@@ -38,93 +42,6 @@ export default async function getForecastHandler(
   const pollenTypes = ["Grass", "Mold", "Ragweed", "Tree"]
 
   const municipalityId = parseInt(id as string)
-
-  /*const forecastData = data.forecasts.map(
-    (val: {
-      date: Date
-      airAndPollen: { name: string; value: number; categoryValue: number }[]
-    }) => {
-      return {
-        date: val.date,
-        municipalityId: parseInt(id as string),
-        pollenLevels: {
-          createMany: {
-            data: val.airAndPollen
-              .filter((p) => pollenTypes.includes(p.name))
-              .map((p) => {
-                return {
-                  type: <keyof typeof PollenType>p.name.toUpperCase(),
-                  value: p.value,
-                  categoryValue: p.categoryValue,
-                }
-              }),
-          },
-        },
-      }
-    },
-  )*/
-
-  /*
-  const createdData = forecastData.map(async (val: any) => {
-    return await prisma.forecast
-      .upsert({
-        where: {
-          municipalityId_date: {
-            date: val.date,
-          municipalityId: val.municipalityId
-          }
-        },
-        create: {},
-        update: {}
-        data: val,
-        include: { pollenLevels: true },
-      })
-      .catch((reason) => {
-        console.log(reason)
-      })
-  })
-
-  const createdData = forecastData.map(async (val: any) => {
-    return await prisma.forecast
-      .create({
-        data: val,
-        include: { pollenLevels: true },
-      })
-      .catch((reason) => {
-        console.log(reason)
-      })
-  })
-
-  */
-
-  /*
-  const createdData = forecastData.map(async (val: any) => {
-    return await prisma.forecast
-      .upsert({
-        where: {
-          municipalityId_date: {
-            date: val.date,
-            municipalityId: val.municipalityId,
-          },
-        },
-        create: {
-          date: val.date,
-          municipalityId: val.municipalityId,
-          pollenLevels: {
-            createMany: {
-              data: val.airAndPollen
-            }
-          }
-        },
-        update: {
-          dateRetrieved: new Date(),
-        },
-        include: { pollenLevels: true },
-      })
-      .catch((reason) => {
-        console.log(reason)
-      })
-  })*/
 
   const createdData = data.forecasts.map(
     async (forecast: {

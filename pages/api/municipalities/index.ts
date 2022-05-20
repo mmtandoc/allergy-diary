@@ -119,8 +119,10 @@ export default async function municipalitiesHandler(
       break
     }
     default:
-      res.setHeader("Allow", ["GET", "POST"])
-      res.status(405).end(`Method ${method} Not Allowed...`)
+      res
+        .setHeader("Allow", ["GET", "POST"])
+        .status(405)
+        .json({ error: { code: 405, message: `Method ${method} Not Allowed` } })
       break
   }
 

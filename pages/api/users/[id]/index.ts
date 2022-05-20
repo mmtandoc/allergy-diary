@@ -10,30 +10,40 @@ export default async function municipalityHandler(
     method,
   } = req
 
-  if (method !== "GET") {
-    res.setHeader("Allow", ["GET"])
-    res.status(405).end(`Method ${method} Not Allowed`)
-    return
-  }
-
-  const user = await prisma.user
-    .findUnique({
-      where: { id: parseInt(id as string) },
-      include: {
-        mainMunicipality: {
+  //TODO: Implement other User methods
+  switch (method) {
+    case "GET": {
+      const user = await prisma.user
+        .findUnique({
+          where: { id: parseInt(id as string) },
           include: {
-            country: true,
-            subdivision: true,
+            mainMunicipality: {
+              include: {
+                country: true,
+                subdivision: true,
+              },
+            },
           },
-        },
-      },
-    })
-    .catch((reason) => {
-      //TODO: HANDLE ERROR
-      console.log(reason)
-      res.status(404).json({ error: reason })
-      return
-    })
+        })
+        .catch((reason) => {
+          //TODO: HANDLE ERROR
+          console.log(reason)
+          res.status(404).json({ error: reason })
+          return
+        })
 
-  res.status(200).json({ user })
+      res.status(200).json({ user })
+      return
+    }
+    case "PATCH": {
+      //TODO: Implement PATCH method
+    }
+
+    default:
+      res
+        .setHeader("Allow", ["GET", "PATCH"])
+        .status(405)
+        .json({ error: { code: 405, message: `Method ${method} Not Allowed` } })
+      break
+  }
 }

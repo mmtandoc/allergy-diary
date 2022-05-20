@@ -18,7 +18,9 @@ export default async function handler(
     }
     case "POST": {
       if (!("email" in body) || !("password" in body)) {
-        res.status(400).json({ error: "Missing arguments" })
+        res
+          .status(400)
+          .json({ error: { code: 400, message: "Missing arguments" } })
         return
       }
 
@@ -34,12 +36,18 @@ export default async function handler(
       } catch (error) {
         //TODO: Expand error messages
         console.log(error)
-        res.status(500).json({ error: "Error with database" })
+        res
+          .status(500)
+          .json({ error: { code: 500, message: "Error with database" } })
         return
       }
 
       if (!user) {
-        res.status(404).json({ error: `User ${email} does not exist` })
+        res
+          .status(404)
+          .json({
+            error: { code: 404, message: `User ${email} does not exist` },
+          })
         return
       }
 
@@ -79,8 +87,10 @@ export default async function handler(
       return
     }
     default:
-      res.setHeader("Allow", ["POST", "GET"])
-      res.status(405).end(`Method ${method} Not Allowed`)
+      res
+        .setHeader("Allow", ["POST", "GET"])
+        .status(405)
+        .json({ error: { code: 405, message: `Method ${method} Not Allowed` } })
       return
   }
 }

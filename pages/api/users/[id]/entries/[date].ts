@@ -34,7 +34,7 @@ export default async function entryHandler(
         .catch((reason) => {
           //TODO: HANDLE ERROR
           console.log(reason)
-          res.status(404).json({ error: reason })
+          res.status(404).json({ error: { code: 404, message: reason } })
           return
         })
       res.status(200).json(entry)
@@ -67,10 +67,13 @@ export default async function entryHandler(
       break
     }
     case "PATCH":
+      //TODO: Implement entry patch
       break
     default:
-      res.setHeader("Allow", ["GET", "PUT", "PATCH"])
-      res.status(405).end(`Method ${method} Not Allowed...`)
+      res
+        .setHeader("Allow", ["GET", "PUT", "PATCH"])
+        .status(405)
+        .json({ error: { code: 405, message: `Method ${method} Not Allowed` } })
       break
   }
 }

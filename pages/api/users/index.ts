@@ -14,10 +14,11 @@ export default async function municipalityHandler(
     case "POST": {
       const { name, email, password1, password2, mainMunicipalityId } = query
 
-      const errors = []
-
       if (password1 !== password2) {
-        errors.push("Passwords do not match.")
+        res
+          .status(400)
+          .json({ error: { code: 400, message: "Passwords do not match." } })
+        return
       }
 
       const emailExists =
@@ -28,11 +29,15 @@ export default async function municipalityHandler(
         })) > 0
 
       if (emailExists) {
-        errors.push("The given email has already been used.")
-      }
-
-      if (errors.length > 0) {
-        res.status(400).json({ errors })
+        res
+          .status(400)
+          .json({
+            error: {
+              code: 400,
+              message: "The given email has already been used.",
+            },
+          })
+        return
       }
 
       //TODO: Handle database errors
@@ -53,7 +58,9 @@ export default async function municipalityHandler(
           },
         })
       } catch (error) {
-        res.status(500).send("Error with database")
+        res
+          .status(500)
+          .json({ error: { code: 500, message: "Error with database" } })
         return
       }
 
